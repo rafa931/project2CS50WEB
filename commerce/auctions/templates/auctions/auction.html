@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div>
+    <form action="{% url 'listingView' listing.id %}" method="POST">
+        {% csrf_token %}
+        {% if is_in_watchList %}
+            <button name="rm" value="rm">Remove from Watchlist</button>
+        {% else %}
+             <button name="add" value="add">Add to Watchlist</button>
+        {% endif %}
+
+    {% if message %}
+        {{ message }}
+    {% endif %}
+       
+    </form>
+    
+    <h3>{{ listing.title }}</h3>
+    <img src="{{ listing.image_url }}" alt="">
+    <p>{{ listing.description }}</p>
+    <p>{{ listing.starting_bid}}</p>
+    <p></p>
+
+    <form action="" method="post">
+        <input type="number">
+    </form>
+</div>
+
+{% endblock %}

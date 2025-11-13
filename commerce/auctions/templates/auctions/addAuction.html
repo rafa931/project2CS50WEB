@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Add Auction
+{% endblock %}
+
+{% block body %}
+    {% if message %}
+        
+    {% endif %}
+    <form action="{% url 'addAuction'  %}" method="post">
+        {% csrf_token %}
+        <label for="title">Title</label>
+        <input id="title" type="text" name="title" placeholder="Title" required>
+        <label for="desc">Description</label>
+        <input id="desc" type="text" name="desc" placeholder="Description" required>
+        <label for="price">Price</label>
+        <input type="number" id="price" step="0.01" name="price" required>
+        <label for="urlp">Photo URL (Optional)</label>
+        <input id="urlp" name="url" type="url">
+        <label for="cat">Category (Optional)</label>
+        <input type="text" name="cat" id="cat">
+        <input type="submit">
+    </form>    
+
+{% endblock %}
