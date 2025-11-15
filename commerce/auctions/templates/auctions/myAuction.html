@@ -1,0 +1,27 @@
+
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block title %}
+    My Auctions
+{% endblock %}
+
+{% block body %}
+    {% for item in list %}
+        <div>
+            <a href="{% url 'listingView' item.id %}">
+            {% if not item.image_url %}
+                <img src="{% static 'images/no-image.jpg' %}" alt="image">
+            {% else %}
+            <img src="{{ item.image_url}}" alt="image">
+            {% endif %}
+            <h3>{{ item.title }}</h3>
+            <p> {{ item.starting_bid }}</p>
+            <p> {{ item.description }}</p>
+            <p></p>
+            </a>
+        </div>
+    {% empty %}
+    <p>No auctions found.</p>
+    {% endfor %}
+{% endblock %}

@@ -6,7 +6,7 @@
 
 {% block body %}
     {% if message %}
-        
+        {{ message }}
     {% endif %}
     <form action="{% url 'addAuction'  %}" method="post">
         {% csrf_token %}

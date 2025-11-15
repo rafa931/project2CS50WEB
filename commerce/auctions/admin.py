@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AuctionListings, User, Bids, WacthList
+from .models import AuctionListings, User, Bids, WacthList, Commnets
 
 class AuctionListingsAdmin(admin.ModelAdmin):
     list_display = ('title', 'starting_bid', 'is_active', 'owner', 'created_at')
@@ -11,3 +11,5 @@ admin.site.register(AuctionListings, AuctionListingsAdmin)
 admin.site.register(User)
 admin.site.register(Bids)
 admin.site.register(WacthList)
+admin.site.register(Commnets)
+

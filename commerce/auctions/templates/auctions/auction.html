@@ -1,31 +1,119 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
+{% block title %}
+Auction Details
+{% endblock %}
 {% block body %}
 
-<div>
+<div class="auction">
+    {% if user.is_authenticated and user == listing.owner %}
+    <form action="{% url 'editAuction' listing.id %}" method="POST">
+    <button name="edit-auction" value="edit-auction">Edit Auction</button>
+    </form>
+    {% endif %}
+
+    {% if check_user %}
+    {{ message }}
+    {% endif %}
+    {% if not check_user and active %}
     <form action="{% url 'listingView' listing.id %}" method="POST">
         {% csrf_token %}
         {% if is_in_watchList %}
-            <button name="rm" value="rm">Remove from Watchlist</button>
+        <button name="rm" value="rm">Remove from Watchlist</button>
         {% else %}
-             <button name="add" value="add">Add to Watchlist</button>
+        <button name="add" value="add">Add to Watchlist</button>
         {% endif %}
 
-    {% if message %}
-        {{ message }}
-    {% endif %}
-       
-    </form>
-    
-    <h3>{{ listing.title }}</h3>
-    <img src="{{ listing.image_url }}" alt="">
-    <p>{{ listing.description }}</p>
-    <p>{{ listing.starting_bid}}</p>
-    <p></p>
+        {% if messagee %}
+        {{ messagee }}
+        {% endif %}
+        {% else %}
+        <form action="{% url 'listingView' listing.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="rm-item" value="rm-item">Remove Item</button>
+            {% if active %}
+            <button type="submit" name="close-item" value="close-item">Close Auction</button>
+            {% else %}
+            <p>This auction is closed</p>
+            {% endif %}
+        </form>
+        {% endif %}
 
-    <form action="" method="post">
-        <input type="number">
     </form>
+    <div class="auction-cont">
+        {% if not listing.image_url %}
+        <img src="{% static 'images/no-image.jpg' %}" alt="image">
+        {% else %}
+        <img src="{{ listing.image_url }}" alt="image">
+        {% endif %}
+        <h3>{{ listing.title }}</h3>
+        <p>{{ listing.description }}</p>
+        <p>{{ listing.starting_bid}}</p>
+        <p></p>
+    </div>
+
+    {% if not check_user and active %}
+    <form action="{% url 'listingView' listing.id %}" method="POST">
+        {% csrf_token %}
+        <label for="bid"></label>
+        <input id="bid" type="number" name="bid">
+    </form>
+    {% if current_price %}
+    {{ current_price }}
+    {% endif %}
+    {% endif %}
+</div>
+
+<div>
+    <h3>Comments</h3>
+    {% if active %}
+   
+    {% if not comment %}
+    <form action="{% url 'listingView' listing.id %}" method="POST">
+        {% csrf_token %}
+        <label for="comment"></label>
+        <textarea id="comment" type="text" name="comment" placeholder="Add a comment"></textarea>
+        <input type="submit" value="Submit">
+    </form>
+    {% endif %}
+    {% else %}
+    <p>Comments are closed for this auction.</p>
+    {% endif %}
+
+    {% for comm in comments %}
+
+    <div class="comment-box">
+        <p>{{ comm.commenter }}</p>
+        <p>{{ comm.comment_text }}</p>
+        <p>{{ comm.comment_time }}</p>
+        {% if comm.commenter.id == user.id %}
+        {% if active %}
+        
+        <form action="{% url 'manageComments' comm.id %}" method="POST">
+            {% csrf_token %}
+            <button name="edit-comment" value="edit-comment">Edit</button>
+            <button name="delete-comment" value="delete-comment">Delete</button>
+        </form>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    {% empty %}
+
+    {% if not comment %}
+    <p>No comments yet. Be first to post one</p>
+    {% else %}
+
+    <form action="{% url 'manageComments' comment.id %}" method="POST">
+        {% csrf_token %}
+        <textarea id="" name="edit-new-comm">{{comment_text}}</textarea>
+        <input type="submit" value="Save">
+    </form>
+    {% endif %}
+
+    {% endfor %}
+     
 </div>
 
 {% endblock %}

@@ -35,3 +35,12 @@ class WacthList(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.auctionItem}"
+
+class Commnets(models.Model):
+    commenter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments_user")
+    listing = models.ForeignKey(AuctionListings, on_delete=models.CASCADE, related_name="comments")
+    comment_text = models.TextField()
+    comment_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.commenter} - {self.listing} - {self.comment_time} - {self.comment_text}"
