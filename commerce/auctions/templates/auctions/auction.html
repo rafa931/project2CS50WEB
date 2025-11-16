@@ -6,114 +6,181 @@ Auction Details
 {% endblock %}
 {% block body %}
 
-<div class="auction">
-    {% if user.is_authenticated and user == listing.owner %}
-    <form action="{% url 'editAuction' listing.id %}" method="POST">
-    <button name="edit-auction" value="edit-auction">Edit Auction</button>
-    </form>
+{% if not check_user and active %}
+<form action="{% url 'listingView' listing.id %}" method="POST" style="margin-left: 7px;">
+    {% csrf_token %}
+    {% if is_in_watchList %}
+    <button class="btn-auction" name="rm" value="rm">Remove from Watchlist</button>
+    {% else %}
+    <button class="btn-auction" name="add" value="add">Add to Watchlist</button>
+    {% endif %}
+    {% if messagee %}
+    {{ messagee }}
+    {% endif %}
+</form>
+{% endif %}
+
+<div class="auction-item">
+    {% if winner %}
+    <p>{{ winner }}</p>
     {% endif %}
 
     {% if check_user %}
     {{ message }}
     {% endif %}
+
+
+
+    <div class="auction-cont">
+        <div>
+            {% if not listing.image_url %}
+            <img src="{% static 'images/no-image.jpg' %}" alt="image">
+            {% else %}
+            <img src="{{ listing.image_url }}" alt="image">
+            {% endif %}
+        </div>
+
+        <div>
+            <h3>{{ listing.title }}</h3>
+            <p class="description">{{ listing.description }}</p>
+            <p class="item-bid">Bid: {{ listing.starting_bid}}</p>
+            {% if listing.category %}
+            <p>Category: {{ listing.category }}</p>
+            {% endif %}
+
+            <p class="time-stamp">Created at: {{ listing.created_at|date:"Y-m-d H:i" }}</p>
+
+        </div>
+
+
+    </div>
+
+    {% if number_bids %}
+    <p class="num-bids">Number of bids: ({{ number_bids }})</p>
+    {% endif %}
+
+
     {% if not check_user and active %}
-    <form action="{% url 'listingView' listing.id %}" method="POST">
+    <form id="bid-form" action="{% url 'listingView' listing.id %}" method="POST">
         {% csrf_token %}
-        {% if is_in_watchList %}
-        <button name="rm" value="rm">Remove from Watchlist</button>
-        {% else %}
-        <button name="add" value="add">Add to Watchlist</button>
+        <label for="bid">Bid: </label>
+        <input id="bid" type="number" name="bid">
+        <input class="btn-auction" type="submit">
+
+        {% if more %}
+        <p>{{ more }}</p>
         {% endif %}
 
-        {% if messagee %}
-        {{ messagee }}
+    </form>
+
+    {% endif %}
+
+    <div class="cont-btn">
+
+        {% if active %}
+        {% if user.is_authenticated and user == listing.owner %}
+        <form action="{% url 'editAuction' listing.id %}" method="GET">
+            {% csrf_token %}
+            <button class="btn-auction" name="edit-auction" value="edit-auction">Edit Auction</button>
+        </form>
         {% endif %}
-        {% else %}
+        {% endif %}
+
+
+        {% if check_user %}
         <form action="{% url 'listingView' listing.id %}" method="POST">
             {% csrf_token %}
-            <button type="submit" name="rm-item" value="rm-item">Remove Item</button>
+            <button class="btn-auction" type="submit" name="rm-item" value="rm-item">Remove Item</button>
             {% if active %}
-            <button type="submit" name="close-item" value="close-item">Close Auction</button>
+            <button class="btn-auction" type="submit" name="close-item" value="close-item">Close Auction</button>
             {% else %}
             <p>This auction is closed</p>
             {% endif %}
         </form>
         {% endif %}
 
-    </form>
-    <div class="auction-cont">
-        {% if not listing.image_url %}
-        <img src="{% static 'images/no-image.jpg' %}" alt="image">
-        {% else %}
-        <img src="{{ listing.image_url }}" alt="image">
-        {% endif %}
-        <h3>{{ listing.title }}</h3>
-        <p>{{ listing.description }}</p>
-        <p>{{ listing.starting_bid}}</p>
-        <p></p>
     </div>
 
-    {% if not check_user and active %}
-    <form action="{% url 'listingView' listing.id %}" method="POST">
-        {% csrf_token %}
-        <label for="bid"></label>
-        <input id="bid" type="number" name="bid">
-    </form>
-    {% if current_price %}
-    {{ current_price }}
-    {% endif %}
-    {% endif %}
 </div>
 
 <div>
-    <h3>Comments</h3>
-    {% if active %}
-   
-    {% if not comment %}
-    <form action="{% url 'listingView' listing.id %}" method="POST">
-        {% csrf_token %}
-        <label for="comment"></label>
-        <textarea id="comment" type="text" name="comment" placeholder="Add a comment"></textarea>
-        <input type="submit" value="Submit">
-    </form>
-    {% endif %}
-    {% else %}
-    <p>Comments are closed for this auction.</p>
-    {% endif %}
 
-    {% for comm in comments %}
+    <div class="cont-comments">
 
-    <div class="comment-box">
-        <p>{{ comm.commenter }}</p>
-        <p>{{ comm.comment_text }}</p>
-        <p>{{ comm.comment_time }}</p>
-        {% if comm.commenter.id == user.id %}
+        <h3>Comments</h3>
+
         {% if active %}
-        
-        <form action="{% url 'manageComments' comm.id %}" method="POST">
+
+        {% if not comment %}
+        <form action="{% url 'listingView' listing.id %}" method="POST">
             {% csrf_token %}
-            <button name="edit-comment" value="edit-comment">Edit</button>
-            <button name="delete-comment" value="delete-comment">Delete</button>
+
+            <div id="form-comment">
+
+                <label for="comment">Add a comment:</label>
+                <textarea id="comment" type="text" name="comment" placeholder="Add a comment"></textarea>
+                <input id="submit" type="submit" value="Submit">
+
+            </div>
+
         </form>
         {% endif %}
+        {% else %}
+        <p>Comments are closed for this auction.</p>
         {% endif %}
+
+        {% for comm in comments %}
+
+        <div class="comment-box">
+
+
+
+            <div class="commenter">
+
+                <label for="">Comment by:</label>
+                <p>{{ comm.commenter }}</p>
+
+            </div>
+
+            <div class="box-comm">
+
+                <p>{{ comm.comment_text }}</p>
+                <p class="comment-time">{{ comm.comment_time }}</p>
+                {% if comm.commenter.id == user.id %}
+                {% if active %}
+
+            </div>
+
+            <form action="{% url 'manageComments' comm.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn-auction" name="edit-comment" value="edit-comment">Edit</button>
+                <button class="btn-auction" name="delete-comment" value="delete-comment">Delete</button>
+            </form>
+
+            {% endif %}
+            {% endif %}
+
+
+
+        </div>
+
+        {% empty %}
+
+        {% if not comment %}
+        <p>No comments yet. Be first to post one</p>
+        {% else %}
+
+        <form action="{% url 'manageComments' comment.id %}" method="POST">
+            {% csrf_token %}
+            <textarea id="" name="edit-new-comm">{{comment_text}}</textarea>
+            <input type="submit" value="Save">
+        </form>
+        {% endif %}
+
+        {% endfor %}
+
     </div>
 
-    {% empty %}
-
-    {% if not comment %}
-    <p>No comments yet. Be first to post one</p>
-    {% else %}
-
-    <form action="{% url 'manageComments' comment.id %}" method="POST">
-        {% csrf_token %}
-        <textarea id="" name="edit-new-comm">{{comment_text}}</textarea>
-        <input type="submit" value="Save">
-    </form>
-    {% endif %}
-
-    {% endfor %}
-     
 </div>
 
 {% endblock %}

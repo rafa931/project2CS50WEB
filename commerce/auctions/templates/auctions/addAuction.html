@@ -8,18 +8,21 @@
     {% if message %}
         {{ message }}
     {% endif %}
-    <form action="{% url 'addAuction'  %}" method="post">
+    
+
+    <form class="form-add" action="{% url 'addAuction'  %}" method="post">
+        <h1 >Add Auction</h1>
         {% csrf_token %}
-        <label for="title">Title</label>
+        <label for="title">Title:</label>
         <input id="title" type="text" name="title" placeholder="Title" required>
-        <label for="desc">Description</label>
+        <label for="desc">Description:</label>
         <input id="desc" type="text" name="desc" placeholder="Description" required>
-        <label for="price">Price</label>
-        <input type="number" id="price" step="0.01" name="price" required>
-        <label for="urlp">Photo URL (Optional)</label>
-        <input id="urlp" name="url" type="url">
-        <label for="cat">Category (Optional)</label>
-        <input type="text" name="cat" id="cat">
+        <label for="price">Price:</label>
+        <input type="number" id="price" step="0.01" name="price" placeholder="Price" required>
+        <label for="urlp">Photo URL (Optional):</label>
+        <input id="urlp" name="url" type="url" placeholder="url image">
+        <label for="cat">Category (Optional):</label>
+        <input type="text" name="cat" id="cat" placeholder="Category">
         <input type="submit">
     </form>    
 

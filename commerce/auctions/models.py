@@ -19,6 +19,7 @@ class AuctionListings(models.Model):
     def __str__(self):
         return f"{self.title} - ${self.starting_bid} - Active: {self.is_active}"
 
+
 class Bids(models.Model):
     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
     listing = models.ForeignKey(AuctionListings, on_delete=models.CASCADE, related_name="bids")

@@ -1,21 +1,29 @@
 {% extends "auctions/layout.html" %}
 {% load static %}
 {% block body %}
+    <div class="container"> 
     {% for listing in listings %}
-        <div class="container">
-            <a href="{% url 'listingView' listing.id %}">
-            <h3>{{ listing.title }}</h3>
-            {% if not listing.image_url %}
+        <a class="item" href="{% url 'listingView' listing.id %}" >
+
+                {% if not listing.image_url %}
                 <img src="{% static 'images/no-image.jpg' %}" alt="">
-            {% else %}
-            <img src="{{ listing.image_url }}" alt="">
-            {% endif %}
-            <p>{{ listing.description}}</p>
-            <p>Starting Bid: ${{ listing.starting_bid}}</p>
-            </a>    
-        </div>
+                {% else %}
+                <img src="{{ listing.image_url }}" alt="">
+                {% endif %}
+                <div class="item-down">
+                <h4>{{ listing.title }}</h4>
+                <p class="description">{{ listing.description}}</p>
+                <p>Bid: ${{ listing.starting_bid}}</p>
+                <p class="time-stamp">{{ listing.created_at|date:"Y-m-d H:i" }}</p>
+                </div>
+        </a>    
+
     {% empty %}
+     {% if my_auctions %}
+    <h2>You have no active listings</h2>
+    {% else %}
         <h2>No listing active</h2>
+    {% endif %}
     {% endfor %}
-    
+    </div>
 {% endblock %}

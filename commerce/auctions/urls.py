@@ -13,5 +13,7 @@ urlpatterns = [
     path("myAuctions", views.myAuctions, name="myAuctions"),
     path("comment/<int:listing_id>", views.manageComments, name="manageComments"),
     path("editAuction/<int:listing_id>", views.editAuction, name="editAuction"),
+    path("categories", views.categoriesView, name="categoriesView"),
+    path("categories/<str:category>", views.categoryListingsView, name="category_list"),
 
 ]
